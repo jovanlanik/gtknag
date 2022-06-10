@@ -1,0 +1,5 @@
+/.cache/
+/gtknag
+compile_flags.txt
+compile_commands.json
+*.o
