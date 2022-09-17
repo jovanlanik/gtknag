@@ -4,8 +4,8 @@
 # Makefile
 
 NAME := gtknag
-PREFIX ?= /usr/local
 
+PREFIX ?= /usr/local
 INSTALL ?= install
 
 LIBS := gtk+-wayland-3.0 gtk-layer-shell-0
@@ -32,3 +32,4 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(NAME)
 
 $(NAME): $(OBJ)
+	$(LINK.c) $(LDLIBS) $^ -o $@
