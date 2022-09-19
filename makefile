@@ -32,4 +32,4 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(NAME)
 
 $(NAME): $(OBJ)
-	$(LINK.c) $(LDLIBS) $^ -o $@
+	$(LINK.c) $^ $(LDLIBS) -o $@
