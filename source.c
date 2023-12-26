@@ -5,6 +5,7 @@
 
 #include <gtk/gtk.h>
 #include "gtknag.h"
+#include "util.h"
 
 struct GtkNag *gtknag = NULL;
 
@@ -15,20 +16,29 @@ static GOptionEntry gtknag_entries[] = {
 	{ NULL },
 };
 
+static gchar *gtk_theme = NULL;
 static char *message = NULL;
 static char *layer = NULL;
 
 static GOptionEntry swaynag_entries[] = {
+	{ "gtk-theme", 'g', 0, G_OPTION_ARG_STRING, &gtk_theme, "Set GTK theme", NULL },
 	// TODO: button
 	// TODO: button-no-terminal
 	// TODO: button-dismiss
 	// TODO: button-dismiss-no-terminal
+	// TODO: config
+	// TODO: debug (ignore)
 	// TODO: edge
 	{ "layer", 'l', G_OPTION_FLAG_NONE, G_OPTION_ARG_STRING, &layer, "Set the layer to use.", NULL },
+	// TODO: font
 	// TODO: detailed-message
-	// TODO: output
-	// TODO: type
+	// TODO: detailed-button
 	{ "message", 'm', 0, G_OPTION_ARG_STRING, &message, "Set the message text", NULL },
+	// TODO: output
+	// TODO: dismiss-button
+	// TODO: type
+	
+	// TODO: appearance options
 	{ NULL },
 };
 
@@ -58,9 +68,9 @@ int main(int argc, char **argv) {
 	g_option_context_add_main_entries(option_context, swaynag_entries, NULL);
 	g_option_context_add_group(option_context, gtk_get_option_group(TRUE));
 	if(!g_option_context_parse(option_context, &argc, &argv, &error))
-		g_error("Option parsing failed: %s\n", error->message);
+		report_error_and_exit("Option parsing failed: %s\n", error->message);
 
-	if(message == NULL) g_error("No message passed. Please provide --message/-m");
+	if(message == NULL) report_error_and_exit("No message passed. Please provide --message/-m");
 
 	gtknag = create_gtknag();
 
@@ -71,6 +81,11 @@ int main(int argc, char **argv) {
 		else if(g_strcmp0(layer, "bottom") == 0) gtknag->layer = GTK_LAYER_SHELL_LAYER_BOTTOM;
 		else if(g_strcmp0(layer, "background") == 0) gtknag->layer = GTK_LAYER_SHELL_LAYER_BACKGROUND;
 		else g_warning("Invalid layer: %s", layer);
+	}
+
+	if(gtk_theme) {
+		GtkSettings *settings = gtk_settings_get_default();
+		g_object_set(settings, "gtk-theme-name", gtk_theme, NULL);
 	}
 
 	if(style_path != NULL) attach_custom_style(style_path);

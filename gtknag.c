@@ -6,9 +6,15 @@
 
 #include "gtknag.h"
 
+#if GLIB_CHECK_VERSION(2, 74, 0)
+	#define GTKNAG_FLAGS G_APPLICATION_DEFAULT_FLAGS
+#else
+	#define GTKNAG_FLAGS G_APPLICATION_FLAGS_NONE
+#endif
+
 struct GtkNag* create_gtknag(void) {
 	struct GtkNag *nag = calloc(1, sizeof(struct GtkNag));
-	nag->app = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
+	nag->app = gtk_application_new(NULL, GTKNAG_FLAGS);
 	return nag;
 }
 
@@ -29,6 +35,7 @@ void gtknag_activate(struct GtkNag *gtknag) {
 	gtk_layer_set_anchor(GTK_WINDOW(gtknag->window), GTK_LAYER_SHELL_EDGE_TOP, TRUE);
 	gtk_layer_set_anchor(GTK_WINDOW(gtknag->window), GTK_LAYER_SHELL_EDGE_BOTTOM, FALSE);
 	gtk_layer_auto_exclusive_zone_enable(GTK_WINDOW(gtknag->window));
+	gtk_layer_set_margin(GTK_WINDOW(gtknag->window), GTK_LAYER_SHELL_EDGE_BOTTOM, 8);
 
 	GtkWidget *window_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	g_object_set(window_box, "margin", 5, NULL);
